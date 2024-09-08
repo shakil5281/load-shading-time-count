@@ -2,6 +2,7 @@ import React from 'react'
 import TodayTable from './component/Table'
 import { Button } from '@/components/ui/button'
 import { PlusCircle } from 'lucide-react'
+import TimeEntry from './component/AddTime'
 
 export default function Today() {
   return (
@@ -9,12 +10,7 @@ export default function Today() {
       <div className='flex justify-between items-center p-4'>
         <div>Today</div>
         <div>
-          <Button size="sm" className="h-7 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Time
-            </span>
-          </Button>
+          <TimeEntry />
         </div>
       </div>
       <div>

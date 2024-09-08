@@ -4,14 +4,14 @@ import {
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-  } from "@/components/ui/tooltip"
+} from "@/components/ui/tooltip"
 import Link from 'next/link'
-import { Home, LineChart, Package, Package2, Settings, ShoppingCart, Timer, Users2 } from 'lucide-react'
+import { Calendar, CalendarDays, Home, LineChart, Package, Package2, Settings, ShoppingCart, Timer, Users2 } from 'lucide-react'
 
 export default function Sidebar() {
     return (
         <div>
-            <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
+            <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r sm:flex">
                 <nav className="flex flex-col items-center gap-4 px-2 py-4">
                     <Link
                         href="#"
@@ -24,7 +24,7 @@ export default function Sidebar() {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="#"
+                                    href="/"
                                     className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                                 >
                                     <Home className="h-5 w-5" />
@@ -52,42 +52,28 @@ export default function Sidebar() {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="#"
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                    href="/month"
+                                    className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8"
                                 >
-                                    <Package className="h-5 w-5" />
-                                    <span className="sr-only">Products</span>
+                                    <CalendarDays className="h-5 w-5" />
+                                    <span className="sr-only">Month</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right">Products</TooltipContent>
+                            <TooltipContent side="right">Month</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="#"
+                                    href="/year"
                                     className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                                 >
-                                    <Users2 className="h-5 w-5" />
-                                    <span className="sr-only">Customers</span>
+                                    <Calendar className="h-5 w-5" />
+                                    <span className="sr-only">Year</span>
                                 </Link>
                             </TooltipTrigger>
-                            <TooltipContent side="right">Customers</TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Link
-                                    href="#"
-                                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                                >
-                                    <LineChart className="h-5 w-5" />
-                                    <span className="sr-only">Analytics</span>
-                                </Link>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">Analytics</TooltipContent>
+                            <TooltipContent side="right">Year</TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
                 </nav>
@@ -96,7 +82,7 @@ export default function Sidebar() {
                         <Tooltip>
                             <TooltipTrigger asChild>
                                 <Link
-                                    href="#"
+                                    href="/settings"
                                     className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                                 >
                                     <Settings className="h-5 w-5" />
