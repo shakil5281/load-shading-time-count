@@ -1,5 +1,8 @@
+// app/components/ElectricityHoursTable.tsx
+
 "use client";
 
+import { useEffect, useState } from "react";
 import { MoreHorizontal } from "lucide-react";
 import {
   Card,
@@ -25,37 +28,54 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-// Mock data for demo
-const electricityData = [
-  {
-    date: "2024-09-01",
-    month: "September",
-    inTime: "06:00 AM",
-    outTime: "12:00 PM",
-    hoursOn: 6,
-  },
-  {
-    date: "2024-09-01",
-    month: "September",
-    inTime: "01:00 PM",
-    outTime: "05:00 PM",
-    hoursOn: 4,
-  },
-  {
-    date: "2024-09-02",
-    month: "September",
-    inTime: "07:00 AM",
-    outTime: "11:00 AM",
-    hoursOn: 4,
-  },
-];
+const fetchTimeEntries = async () => {
+  const response = await fetch('/api/time-entry');
+  if (!response.ok) {
+    throw new Error('Failed to fetch time entries');
+  }
+  return response.json();
+};
+
+// Function to calculate hours between two time strings
+const calculateHours = (inTime: string, outTime: string) => {
+  const [inHour, inMinute] = inTime.split(':').map(Number);
+  const [outHour, outMinute] = outTime.split(':').map(Number);
+  
+  const inDate = new Date();
+  inDate.setHours(inHour, inMinute);
+  
+  const outDate = new Date();
+  outDate.setHours(outHour, outMinute);
+  
+  const diffMs = outDate.getTime() - inDate.getTime();
+  return (diffMs / (1000 * 60 * 60)).toFixed(2); // Return hours as a string with 2 decimal places
+};
 
 // Function to calculate total hours per day
-const calculateTotalHours = (data:any) => {
-  return data.reduce((acc:any, entry:any) => acc + entry.hoursOn, 0);
+const calculateTotalHours = (data: any) => {
+  return data.reduce((acc: any, entry: any) => acc + parseFloat(calculateHours(entry.inTime, entry.outTime)), 0);
 };
 
 export default function ElectricityHoursTable() {
+  const [data, setData] = useState<any[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const timeEntries = await fetchTimeEntries();
+        setData(timeEntries);
+      } catch (err) {
+        setError('Failed to load data');
+      }
+    };
+    getData();
+  }, []);
+
+  if (error) {
+    return <div>{error}</div>;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -79,13 +99,13 @@ export default function ElectricityHoursTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {electricityData.map((entry, index) => (
+            {data.map((entry, index) => (
               <TableRow key={index}>
                 <TableCell>{entry.date}</TableCell>
                 <TableCell>{entry.month}</TableCell>
                 <TableCell>{entry.inTime}</TableCell>
                 <TableCell>{entry.outTime}</TableCell>
-                <TableCell>{entry.hoursOn} hrs</TableCell>
+                <TableCell>{calculateHours(entry.inTime, entry.outTime)} hrs</TableCell>
                 <TableCell>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -109,7 +129,7 @@ export default function ElectricityHoursTable() {
       <CardFooter>
         <div className="text-xs text-muted-foreground">
           Total Hours Today:{" "}
-          <strong>{calculateTotalHours(electricityData)}</strong> hours
+          <strong>{calculateTotalHours(data)}</strong> hours
         </div>
       </CardFooter>
     </Card>
