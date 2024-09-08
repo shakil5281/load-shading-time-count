@@ -132,7 +132,7 @@ export default function Header() {
                             className="overflow-hidden rounded-full"
                         >
                             <Image
-                                src="/placeholder-user.jpg"
+                                src="https://static.vecteezy.com/system/resources/thumbnails/002/002/403/small/man-with-beard-avatar-character-isolated-icon-free-vector.jpg"
                                 width={36}
                                 height={36}
                                 alt="Avatar"
