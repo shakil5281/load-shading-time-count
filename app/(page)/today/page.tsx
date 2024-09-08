@@ -8,7 +8,7 @@ export default function Today() {
   return (
     <div>
       <div className='flex justify-between items-center p-4'>
-        <div>Today</div>
+        <div className='text-2xl font-semibold '>Today</div>
         <div>
           <TimeEntry />
         </div>

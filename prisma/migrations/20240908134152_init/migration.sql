@@ -1,0 +1,10 @@
+-- CreateTable
+CREATE TABLE "TimeEntry" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "date" DATETIME NOT NULL,
+    "month" TEXT NOT NULL,
+    "inTime" TEXT NOT NULL,
+    "outTime" TEXT NOT NULL,
+    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" DATETIME NOT NULL
+);
