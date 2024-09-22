@@ -6,10 +6,8 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:/absolute/path/to/dev.db" // Use the absolute path
+  url      = env("DATABASE_URL") // Environment variable for SQLite database path
 }
-
-
 
 model TimeEntry {
   id        Int      @id @default(autoincrement())
