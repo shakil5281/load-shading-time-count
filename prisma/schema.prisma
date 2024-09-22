@@ -6,8 +6,9 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db" // Directly set the path to the database
+  url      = "file:/absolute/path/to/dev.db" // Use the absolute path
 }
+
 
 
 model TimeEntry {
