@@ -1,16 +1,14 @@
-// prisma/schema.prisma
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL") // Environment variable for SQLite database path
+  provider = "mongodb"
+  url      = env("DATABASE_URL") // Use environment variable for MongoDB connection string
 }
 
 model TimeEntry {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   date      DateTime
   month     String
   inTime    String
