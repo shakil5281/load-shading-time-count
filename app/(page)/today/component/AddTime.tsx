@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { format } from "date-fns"
-import { CalendarIcon, PlusCircle } from "lucide-react"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon, PlusCircle } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import axios from "axios";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
     Form,
     FormControl,
@@ -18,7 +18,7 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import {
     Dialog,
     DialogContent,
@@ -27,18 +27,18 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
-import { Input } from "@/components/ui/input"
-import { Toast } from "@/components/ui/toast"
-import { useToast } from "@/hooks/use-toast"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { toast } from "sonner";
 
 // Define enum for months
 const Months = [
@@ -54,49 +54,37 @@ const Months = [
     "October",
     "November",
     "December",
-] as const
+] as const;
 
 // Define schema for validation
 const FormSchema = z.object({
     date: z.date({ required_error: "Date is required." }),
+    startTime: z.string().nonempty({ message: "Start Time is required." }),
+    endTime: z.string().nonempty({ message: "End Time is required." }),
     month: z.enum(Months, { required_error: "Month is required." }),
-    inTime: z.string().nonempty({ message: "In Time is required." }),
-    outTime: z.string().nonempty({ message: "Out Time is required." }),
-})
+});
 
-export default function TimeEntry() {
-
-    const { toast } = useToast()
+export default function LoadSheddingCounter({ hide }:any) {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             date: new Date(),
+            startTime: "",
+            endTime: "",
             month: Months[new Date().getMonth()],
-            inTime: "",
-            outTime: "",
         },
-    })
+    });
 
     async function onSubmit(data: z.infer<typeof FormSchema>) {
-        console.log("Form Data:", data); // Check what data is being submitted
-    
         try {
-            const response = await axios.post("/api/time-entry", data);
-            console.log("Response Data:", response.data); // Log the result
-            toast({
-                title: "Time Entry Created",
-                description: `ID: ${response.data.id}`,
-            });
-        } catch (error:any) {
-            console.error("Error Response:", error.response?.data || error.message); // Log error details
-            toast({
-                title: "Error",
-                description: "Could not create time entry",
-            });
+            const response = await axios.post("/api/load-shedding", data);
+            toast.success("Load Shedding Entry Added Successfully");
+            form.reset();
+            hide();
+        } catch (error: any) {
+            toast.error(error.message);
         }
     }
-
-
 
     return (
         <Dialog>
@@ -104,15 +92,15 @@ export default function TimeEntry() {
                 <Button className="gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Add Time
+                        Add Load Shedding
                     </span>
                 </Button>
             </DialogTrigger>
             <DialogContent className="bg-white">
                 <DialogHeader>
-                    <DialogTitle>Add Time Entry</DialogTitle>
+                    <DialogTitle>Add Load Shedding Entry</DialogTitle>
                     <DialogDescription>
-                        Fill in the details for your time entry below. Click save when you're done.
+                        Fill in the details for your load shedding entry below. Click save when you're done.
                     </DialogDescription>
                 </DialogHeader>
 
@@ -187,14 +175,13 @@ export default function TimeEntry() {
                             )}
                         />
 
-
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="inTime"
+                                name="startTime"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>In Time</FormLabel>
+                                        <FormLabel>Start Time</FormLabel>
                                         <FormControl>
                                             <Input type="time" {...field} />
                                         </FormControl>
@@ -206,10 +193,10 @@ export default function TimeEntry() {
 
                             <FormField
                                 control={form.control}
-                                name="outTime"
+                                name="endTime"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Out Time</FormLabel>
+                                        <FormLabel>End Time</FormLabel>
                                         <FormControl>
                                             <Input type="time" {...field} />
                                         </FormControl>
@@ -220,7 +207,6 @@ export default function TimeEntry() {
                             />
                         </div>
 
-
                         <DialogFooter>
                             <Button type="submit">Save changes</Button>
                         </DialogFooter>
@@ -228,5 +214,5 @@ export default function TimeEntry() {
                 </Form>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
