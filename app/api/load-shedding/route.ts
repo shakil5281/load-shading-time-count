@@ -34,54 +34,70 @@ export async function POST(req: NextRequest) {
     // Calculate duration
     const duration = calculateDuration(startTime, endTime);
 
-    const newLoadShedding = await prisma.loadShedding.create({
-      data: {
-        date: new Date(date),
-        startTime,
-        endTime,
-        duration, // Store duration as a formatted time string
-      },
-    });
+    await prisma.$transaction(async (tx) => {
+      const newLoadShedding = await prisma.loadShedding.create({
+        data: {
+          date: new Date(date),
+          startTime,
+          endTime,
+          duration, // Store duration as a formatted time string
+        },
+      });
 
 
-    const timeEntries = await prisma.loadShedding.findMany({
-      select: {
-        duration: true,
-      },
-    });
+      const timeEntries = await prisma.loadShedding.findMany({
+        select: {
+          duration: true,
+        },
+      });
 
-    // Function to convert duration string "HH:mm" to total minutes
-    // @ts-ignore
-    const convertToMinutes = (duration) => {
-      const [hours, minutes] = duration.split(':').map(Number);
-      return hours * 60 + minutes;
-    };
+      // Function to convert duration string "HH:mm" to total minutes
+      // @ts-ignore
+      const convertToMinutes = (duration) => {
+        const [hours, minutes] = duration.split(':').map(Number);
+        return hours * 60 + minutes;
+      };
 
 // Calculate total duration in minutes
-    const totalDurationInMinutes = timeEntries.reduce((total, entry) => {
-      return total + convertToMinutes(entry.duration);
-    }, 0);
+      const totalDurationInMinutes = timeEntries.reduce((total, entry) => {
+        return total + convertToMinutes(entry.duration);
+      }, 0);
 
 // Optionally, convert total minutes back to "HH:mm" format
-    const hours = Math.floor(totalDurationInMinutes / 60);
-    const minutes = totalDurationInMinutes % 60;
-    const totalDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-
-    console.log('Total Duration:', totalDuration, 'Hours:', hours);
+      const hours = Math.floor(totalDurationInMinutes / 60);
+      const minutes = totalDurationInMinutes % 60;
+      const totalDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
 
-    const storeResetTimeTracking = await prisma.resetTimeTracking.create({
-      data: {
-        duration: totalDuration, // Store duration as a formatted time string
-      },
-    });
 
-    return NextResponse.json(newLoadShedding, { status: 201 });
+      const existingEntry = await prisma.resetTimeTracking.findFirst();
+
+      if (existingEntry) {
+        // Update the existing document
+        const updatedEntry = await prisma.resetTimeTracking.update({
+          where: { id: existingEntry.id },
+          data: { duration: totalDuration },
+        });
+      } else {
+        // Create a new document
+        const newEntry = await prisma.resetTimeTracking.create({
+          data: { duration: totalDuration },
+        });
+      }
+
+
+
+    })
+    return NextResponse.json({message: 'success'}, { status: 201 });
+
   } catch (error: any) {
     console.error("Error creating load shedding entry:", error);
     return NextResponse.json({ error: error.message || "Error creating load shedding entry" }, { status: 500 });
   }
 }
+
+
+
 
 
 
@@ -230,7 +246,7 @@ export async function GET(req: NextRequest) {
     const totalDuration = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
 
     return NextResponse.json({
-      entries: formattedEntries,
+      formattedEntries: formattedEntries,
       totalDuration, // Total duration for the filtered range
     });
   } catch (error) {
