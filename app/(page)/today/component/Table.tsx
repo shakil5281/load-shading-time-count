@@ -50,7 +50,7 @@ export default function ElectricityHoursTable({data}:any) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((entry:any) => (
+            {data?.formattedEntries?.map((entry:any) => (
               <TableRow key={entry.id}>
                 <TableCell>{entry.date}</TableCell>
                 <TableCell>{entry.month}</TableCell>
@@ -89,7 +89,7 @@ export default function ElectricityHoursTable({data}:any) {
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Total Hours Today: <strong>{data.reduce((total:any, entry:any) => total + entry.duration, 0)}</strong> hours
+          Total Hours : <strong>{data?.totalDuration}</strong> hours
         </div>
       </CardFooter>
     </Card>
