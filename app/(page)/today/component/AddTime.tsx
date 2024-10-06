@@ -39,6 +39,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { toast } from "sonner";
+import { useState } from "react";
 
 // Define enum for months
 const Months = [
@@ -65,6 +66,9 @@ const FormSchema = z.object({
 });
 
 export default function LoadSheddingCounter({ hide }:any) {
+
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -81,18 +85,19 @@ export default function LoadSheddingCounter({ hide }:any) {
             toast.success("Load Shedding Entry Added Successfully");
             form.reset();
             hide();
+            setIsDialogOpen(false);
         } catch (error: any) {
             toast.error(error.message);
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
                 <Button className="gap-1">
                     <PlusCircle className="h-3.5 w-3.5" />
                     <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                        Add Load Shedding
+                        Time Entry
                     </span>
                 </Button>
             </DialogTrigger>
